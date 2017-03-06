@@ -2,6 +2,8 @@
 
 Calling Python from Scala
 
+<img src="https://img0.etsystatic.com/151/0/9612812/il_570xN.1146611060_c3p5.jpg" width="200px"/>
+
 #### Type marshalling
 
 Kingscross marshalls/unmarshalls the following type pairs between Python and Scala:

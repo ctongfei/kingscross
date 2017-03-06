@@ -7,34 +7,19 @@ import scala.collection._
 /**
  * Wraps a Python [[List]] as a Scala [[Seq]].
  * @author Tongfei Chen
+ * @since 0.1.0
  */
-class List[T: Unmarshaller](obj: Object)(implicit jep: Jep) extends Facade(obj) with Seq[T] {
+class List[T: Marshaller](obj: Object)(implicit jep: Jep) extends Facade(obj) with mutable.Seq[T] {
+
+  override def stringPrefix = "py.List"
 
   def length = global.len(obj).get.asInstanceOf[Int]
 
   def apply(idx: Int) = obj.index(Expr(idx.toString)).toScala[T]
 
-  def iterator = new Iterator[T] {
-    private[this] val pyIter = Object(s"iter(${obj.py})")
-    private[this] var elem: T = _
-    def hasNext = {
-      if (elem != null) true
-      else {
-        try {
-          elem = Expr(s"next(${pyIter.name})").toScala[T]
-          elem != null
-        }
-        catch {
-          case _: Exception => false //TODO: py.StopIteration
-        }
-      }
-    }
-    def next() = {
-      if ((elem != null) || hasNext) {
-        val r = elem
-        elem = _: T
-        r
-      } else throw new NoSuchElementException
-    }
-  }
+  def iterator = new Iterator[T](Object(s"iter(${obj.py})"))
+
+  def update(idx: Int, elem: T) = obj.indexUpdate(Expr(idx.toString))(elem)
+
+  def +=(elem: T) = obj.append(elem)
 }

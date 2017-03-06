@@ -14,7 +14,7 @@ class Object private(val name: String)(implicit jep: Jep) extends Expr(name) wit
    */
   def get: Any = jep.getValue(py)
 
-  override def toPyObject = this
+  override def toObject = this
 
   override def toString = jep.getValue(s"str($name)").asInstanceOf[String]
 

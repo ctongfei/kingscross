@@ -8,6 +8,10 @@ import scala.language.dynamics
  */ // constructor must not be private: report to SI
 class Global(implicit jep: Jep) extends Dynamic {
 
+  jep eval "import sys"
+
+  val pythonVersion = Expr("sys.version_info[0]").toScala[String]
+
   def applyDynamic(method: String)(params: Expr*): Object =
     Object(s"$method(${params.map(_.py).mkString(", ")})")
 

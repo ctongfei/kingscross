@@ -6,16 +6,24 @@ import scala.language.dynamics
 /**
  * An expression in Python.
  * @author Tongfei Chen
+ * @since 0.1.0
  */
 class Expr private[py](val py: String)(implicit jep: Jep) {
 
   /**
    * Converts a Python reference to a Scala object.
    */
-  def toScala[T](implicit s: Unmarshaller[T]): T = s.unmarshall(this)
+  def toScala[T](implicit m: Marshaller[T]): T = m unmarshall this
 
-  def toPyObject = Object(py)
+  /**
+   * Converts a Python expression to a Python object, hence giving it a name.
+   * This operations caches the result of the expression, making it non-lazy.
+   */
+  def toObject = Object(py)
 
+  /**
+   * Runs this expression in Python.
+   */
   def run() = jep eval py
 
   def applyDynamic(method: String)(params: Expr*) =
@@ -32,6 +40,18 @@ class Expr private[py](val py: String)(implicit jep: Jep) {
 
   def index(key: Expr) =
     Expr(s"($py)[${key.py}]")
+
+  def index(idx: Int) =
+    Expr(s"($py)[$idx]")
+
+  def indexUpdate(key: Expr)(value: Expr) =
+    Expr(s"($py)[${key.py}] = ${value.py}")
+
+  def indexUpdate(idx: Int)(value: Expr) =
+    Expr(s"($py)[$idx] = ${value.py}")
+
+
+
 
   def unary_+ = Expr(s"+($py)")
 

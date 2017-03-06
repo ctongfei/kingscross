@@ -9,7 +9,7 @@ import scala.collection._
  * @author Tongfei Chen
  * @since 0.1.0
  */
-class Dict[K: Marshaller, V: Marshaller](val obj: Object)(implicit jep: Jep) extends scala.collection.mutable.AbstractMap[K, V] {
+class Dict[K : Unmarshaller : Marshaller, V: Marshaller : Unmarshaller](val obj: Object)(implicit jep: Jep) extends mutable.AbstractMap[K, V] {
 
   override def stringPrefix = "py.dict"
 
@@ -25,26 +25,22 @@ class Dict[K: Marshaller, V: Marshaller](val obj: Object)(implicit jep: Jep) ext
     case "2" => new Iterator[(K, V)](Object(s"${obj.py}.iteritems()"))
     case "3" => new Iterator[(K, V)](Object(s"${obj.py}.items()"))
   }
+
   def +=(kv: (K, V)) = {
     obj.indexUpdate(kv._1)(kv._2)
     this
   }
   def -=(key: K) = {
-    obj.pop(key.toPython)
+    obj.pop(key)
     this
   }
+
 }
 
 object Dict {
-  implicit def marshaller[K: Marshaller, V: Marshaller]: Marshaller[Map[K, V]] = new Marshaller[Map[K, V]] {
-    def marshall(x: Map[K, V])(implicit jep: Jep) = x match {
-      case x: Dict[K, V] => x.obj
-      case _ =>
-        val pyDict = Object("{}")
-        for ((k, v) <- x)
-          jep.eval(s"${pyDict.name}[${k.py}] = ${v.py}")
-        pyDict
-    }
+
+  implicit def unmarshaller[K: Marshaller: Unmarshaller, V: Marshaller : Unmarshaller]: Unmarshaller[Dict[K, V]] = new Unmarshaller[Dict[K, V]] {
     def unmarshall(x: Expr)(implicit jep: Jep) = new Dict[K, V](x.toObject)
   }
+
 }

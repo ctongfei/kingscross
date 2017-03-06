@@ -34,11 +34,5 @@ object Module {
     new Module(id)
   }
 
-  def apply(name: String, asName: String)(implicit jep: Jep) = {
-    val id = s"__m_$pyModuleId"
-    pyModuleId += 1
-    jep eval s"from $name import $asName as $id"
-    new Module(id)
-  }
 
 }

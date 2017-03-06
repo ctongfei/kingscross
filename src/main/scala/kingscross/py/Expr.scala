@@ -13,7 +13,7 @@ class Expr private[py](val py: String)(implicit jep: Jep) {
   /**
    * Converts a Python reference to a Scala object.
    */
-  def toScala[T](implicit m: Marshaller[T]): T = m unmarshall this
+  def toScala[T](implicit u: Unmarshaller[T]): T = u unmarshall this
 
   /**
    * Converts a Python expression to a Python object, hence giving it a name.
@@ -24,7 +24,7 @@ class Expr private[py](val py: String)(implicit jep: Jep) {
   /**
    * Runs this expression in Python.
    */
-  def run() = jep eval py
+  def execute() = jep eval py
 
   def applyDynamic(method: String)(params: Expr*) =
     Expr(s"($py).$method(${params.map(_.py).mkString(", ")}")

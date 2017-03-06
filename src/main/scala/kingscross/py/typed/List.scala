@@ -10,7 +10,7 @@ import scala.collection._
  * @author Tongfei Chen
  * @since 0.1.0
  */
-class List[T: Marshaller](val obj: Object)(implicit jep: Jep) extends mutable.AbstractSeq[T] {
+class List[T: Marshaller : Unmarshaller](val obj: Object)(implicit jep: Jep) extends mutable.AbstractSeq[T] {
 
   override def stringPrefix = "py.list"
 
@@ -23,18 +23,13 @@ class List[T: Marshaller](val obj: Object)(implicit jep: Jep) extends mutable.Ab
   def update(idx: Int, elem: T) = obj.indexUpdate(Expr(idx.toString))(elem)
 
   def +=(elem: T) = obj.append(elem)
+
 }
 
 object List {
-  implicit def marshaller[T: Marshaller]: Marshaller[Seq[T]] = new Marshaller[Seq[T]] {
-    def marshall(x: Seq[T])(implicit jep: Jep) = x match {
-      case x: List[T] => x.obj
-      case _ =>
-        val pyList = Object("[]")
-        for (e <- x)
-          jep.eval(s"${pyList.name}.append(${e.py})")
-        pyList
-    }
+
+  implicit def unmarshaller[T: Marshaller: Unmarshaller]: Unmarshaller[List[T]] = new Unmarshaller[List[T]] {
     def unmarshall(x: Expr)(implicit jep: Jep) = new List[T](x.toObject)
   }
+
 }

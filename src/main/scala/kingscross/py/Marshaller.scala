@@ -63,42 +63,6 @@ object Marshaller {
     def unmarshall(x: Expr)(implicit jep: Jep) = x.toObject.get.toString
   }
 
-  implicit def seq[T: Marshaller]: Marshaller[Seq[T]] = new Marshaller[Seq[T]] {
-    def marshall(x: Seq[T])(implicit jep: Jep) = x match {
-      case x: List[T] => x.obj
-      case _ =>
-        val pyList = Object("[]")
-        for (e <- x)
-          jep.eval(s"${pyList.name}.append(${e.py})")
-        pyList
-    }
-    def unmarshall(x: Expr)(implicit jep: Jep) = new types.List[T](x.toObject)
-  }
-
-  implicit def map[K: Marshaller, V: Marshaller]: Marshaller[Map[K, V]] = new Marshaller[Map[K, V]] {
-    def marshall(x: Map[K, V])(implicit jep: Jep) = x match {
-      case x: Dict[K, V] => x.obj
-      case _ =>
-        val pyDict = Object("{}")
-        for ((k, v) <- x)
-          jep.eval(s"${pyDict.name}[${k.py}] = ${v.py}")
-        pyDict
-    }
-    def unmarshall(x: Expr)(implicit jep: Jep) = new types.Dict[K, V](x.toObject)
-  }
-
-  implicit def set[T: Marshaller]: Marshaller[scala.collection.Set[T]] = new Marshaller[scala.collection.Set[T]] {
-    def marshall(x: scala.collection.Set[T])(implicit jep: Jep) = x match {
-      case x: types.Set[T] => x.obj
-      case _ =>
-        val pySet = Object("set()")
-        for (e <- x)
-          jep.eval(s"${pySet.name}.add(${e.py})")
-        pySet
-    }
-    def unmarshall(x: Expr)(implicit jep: Jep) = new types.Set[T](x.toObject)
-  }
-
   implicit def tuple2[A: Marshaller, B: Marshaller]: Marshaller[(A, B)] = new Marshaller[(A, B)] {
     def marshall(x: (A, B))(implicit jep: Jep) = Object(s"(${x._1.py}, ${x._2.py})")
     def unmarshall(x: Expr)(implicit jep: Jep) = (x.index(0).toScala[A], x.index(1).toScala[B])

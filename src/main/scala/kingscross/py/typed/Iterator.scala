@@ -1,14 +1,14 @@
-package kingscross.py.types
+package kingscross.py.typed
 
 import jep._
-import kingscross.py._
+import kingscross.py.{Marshaller, Object}
 
 /**
  * Wraps a Python [[Iterator]] as a Scala [[Iterator]].
  * @author Tongfei Chen
  * @since 0.1.0
  */
-class Iterator[T: Marshaller](val pyIter: Object)(implicit jep: Jep) extends Facade(pyIter) with scala.Iterator[T] {
+class Iterator[T: Marshaller](val pyIter: Object)(implicit jep: Jep) extends scala.collection.AbstractIterator[T] {
 
   private[this] var elem: T = null.asInstanceOf[T]
   def hasNext = {

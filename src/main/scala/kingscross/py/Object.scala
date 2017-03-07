@@ -36,4 +36,15 @@ object Object {
     new Object(id)
   }
 
+  private[py] def createNdArray[T](nd: NDArray[T])(implicit jep: Jep): Object = {
+    val id = s"__$pyObjectId"
+    jep.set(id, nd)
+    pyObjectId += 1
+    new Object(id)
+  }
+
+  implicit object unmarshaller extends Unmarshaller[Object] {
+    def unmarshall(x: Expr)(implicit jep: Jep) = x.toObject
+  }
+
 }

@@ -14,12 +14,12 @@ class Dict[K : Unmarshaller : Marshaller, V: Marshaller : Unmarshaller](val obj:
   override def stringPrefix = "py.dict"
 
   def get(key: K) = try {
-    Some(obj.index(key).toScala[V])
+    Some(obj.__getitem__(key).toScala[V])
   } catch {
     case e: Exception => None
   }
 
-  override def apply(key: K) = obj.index(key).toScala[V]
+  override def apply(key: K) = obj.__getitem__(key).toScala[V]
 
   def iterator = global.pythonVersion match {
     case "2" => new Iterator[(K, V)](Object(s"${obj.py}.iteritems()"))
@@ -27,7 +27,7 @@ class Dict[K : Unmarshaller : Marshaller, V: Marshaller : Unmarshaller](val obj:
   }
 
   def +=(kv: (K, V)) = {
-    obj.indexUpdate(kv._1)(kv._2)
+    obj.__setitem__(kv._1)(kv._2)
     this
   }
   def -=(key: K) = {

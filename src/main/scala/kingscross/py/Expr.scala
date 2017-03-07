@@ -24,10 +24,10 @@ class Expr private[py](val py: String)(implicit jep: Jep) {
   /**
    * Runs this expression in Python.
    */
-  def execute() = jep eval py
+  def !() = jep eval py
 
   def applyDynamic(method: String)(params: Expr*) =
-    Expr(s"($py).$method(${params.map(_.py).mkString(", ")}")
+    Expr(s"($py).$method(${params.map(_.py).mkString(", ")})")
 
   def applyDynamicNamed(method: String)(params: (String, Expr)*) =
     Expr(s"($py).$method(${params.map { case (k, w) => s"$k=${w.py}"}.mkString(", ")})")
@@ -38,20 +38,17 @@ class Expr private[py](val py: String)(implicit jep: Jep) {
   def updateDynamic(field: String)(value: Expr) =
     Expr(s"($py).$field = ${value.py}")
 
-  def index(key: Expr) =
+  def __getitem__(key: Expr) =
     Expr(s"($py)[${key.py}]")
 
-  def index(idx: Int) =
+  def __getitem__(idx: Int) =
     Expr(s"($py)[$idx]")
 
-  def indexUpdate(key: Expr)(value: Expr) =
-    Expr(s"($py)[${key.py}] = ${value.py}")
+  def __setitem__(key: Expr)(value: Expr) =
+    Expr(s"($py)[${key.py}] = ${value.py}").!()
 
-  def indexUpdate(idx: Int)(value: Expr) =
-    Expr(s"($py)[$idx] = ${value.py}")
-
-
-
+  def __setitem__(idx: Int)(value: Expr) =
+    Expr(s"($py)[$idx] = ${value.py}").!()
 
   def unary_+ = Expr(s"+($py)")
 

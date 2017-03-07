@@ -16,13 +16,16 @@ class List[T: Marshaller : Unmarshaller](val obj: Object)(implicit jep: Jep) ext
 
   def length = global.len(obj).get.asInstanceOf[Int]
 
-  def apply(idx: Int) = obj.index(Expr(idx.toString)).toScala[T]
+  def apply(idx: Int) = obj.__getitem__(Expr(idx.toString)).toScala[T]
 
   def iterator = new typed.Iterator[T](Object(s"iter(${obj.py})"))
 
-  def update(idx: Int, elem: T) = obj.indexUpdate(Expr(idx.toString))(elem)
+  def update(idx: Int, elem: T) = obj.__setitem__(Expr(idx.toString))(elem.toPython).!()
 
-  def +=(elem: T) = obj.append(elem)
+  def +=(elem: T) = {
+    obj.append(elem).!()
+    this
+  }
 
 }
 

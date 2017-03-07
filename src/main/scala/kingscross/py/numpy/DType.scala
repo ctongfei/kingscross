@@ -1,4 +1,4 @@
-package kingscross.py.typed.numpy
+package kingscross.py.numpy
 
 /**
  * @author Tongfei Chen

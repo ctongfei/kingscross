@@ -1,7 +1,7 @@
 package kingscross.py
 
 import jep._
-import kingscross.py.typed.numpy._
+import kingscross.py.numpy._
 
 import scala.annotation._
 import scala.reflect._

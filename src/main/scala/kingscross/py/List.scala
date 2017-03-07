@@ -1,7 +1,6 @@
-package kingscross.py.typed
+package kingscross.py
 
 import jep._
-import kingscross.py.{Expr, typed, _}
 
 import scala.collection._
 
@@ -18,7 +17,7 @@ class List[T: Marshaller : Unmarshaller](val obj: Object)(implicit jep: Jep) ext
 
   def apply(idx: Int) = obj.__getitem__(Expr(idx.toString)).toScala[T]
 
-  def iterator = new typed.Iterator[T](Object(s"iter(${obj.py})"))
+  def iterator = new Iterator[T](Object(s"iter(${obj.py})"))
 
   def update(idx: Int, elem: T) = obj.__setitem__(Expr(idx.toString))(elem.toPython).!()
 

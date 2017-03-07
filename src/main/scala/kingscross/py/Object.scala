@@ -18,7 +18,6 @@ class Object private(val name: String)(implicit jep: Jep) extends Expr(name) wit
 
   override def toString = jep.getValue(s"str($name)").asInstanceOf[String]
 
-
   override def finalize() = {
     jep.eval(s"del $name")
   }

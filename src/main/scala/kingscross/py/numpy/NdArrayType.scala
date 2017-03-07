@@ -1,4 +1,4 @@
-package kingscross.py.typed.numpy
+package kingscross.py.numpy
 
 import scala.reflect._
 

@@ -1,7 +1,7 @@
-package kingscross.py.typed
+package kingscross.py
 
 import jep._
-import kingscross.py._
+
 import scala.collection._
 
 /**

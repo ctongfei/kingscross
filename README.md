@@ -19,8 +19,8 @@ Kingscross marshalls/unmarshalls the following type pairs between Python and Sca
 | scala.Product2[A, B]            | tuple                  | scala.Tuple2[A, B]                    |
 | scala.Product3[A, B, C]         | tuple                  | scala.Tuple3[A, B, C]                 |
 |                                 | object                 | kingscross.py.Object                  |
-|                                 | iterator               | kingscross.py.typed.Iterator[A]       |
-| scala.collection.Seq[A]         | list                   | kingscross.py.typed.List[A]           |
-| scala.collection.Set[A]         | set                    | kingscross.py.typed.Set[A]            |
-| scala.collection.Map[A, B]      | dict                   | kingscross.py.typed.Dict[A, B]        |
+|                                 | iterator               | kingscross.py.Iterator[A]             |
+| scala.collection.Seq[A]         | list                   | kingscross.py.List[A]                 |
+| scala.collection.Set[A]         | set                    | kingscross.py.Set[A]                  |
+| scala.collection.Map[A, B]      | dict                   | kingscross.py.Dict[A, B]              |
 | Array[Array[...[Array[R]]...]]  | numpy.ndarray          | Array[Array[...[Array[R]]...]]        |

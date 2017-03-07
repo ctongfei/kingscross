@@ -1,7 +1,7 @@
 package kingscross.py
 
 import jep._
-import kingscross.py.typed.numpy._
+import kingscross.py.numpy._
 
 import scala.collection._
 import scala.annotation._
@@ -59,7 +59,7 @@ object Marshaller {
 
   implicit def list[T: Marshaller]: Marshaller[Seq[T]] = new Marshaller[Seq[T]] {
     def marshall(x: Seq[T])(implicit jep: Jep) = x match {
-      case x: typed.List[T] => x.obj
+      case x: List[T] => x.obj
       case _ =>
         val pyList = Object("[]")
         for (e <- x)
@@ -68,9 +68,9 @@ object Marshaller {
     }
   }
 
-  implicit def set[T: Marshaller]: Marshaller[Set[T]] = new Marshaller[Set[T]] {
+  implicit def set[T: Marshaller]: Marshaller[scala.collection.Set[T]] = new Marshaller[scala.collection.Set[T]] {
     def marshall(x: scala.collection.Set[T])(implicit jep: Jep) = x match {
-      case x: typed.Set[T] => x.obj
+      case x: Set[T] => x.obj
       case _ =>
         val pySet = Object("set()")
         for (e <- x)
@@ -81,7 +81,7 @@ object Marshaller {
 
   implicit def map[K: Marshaller, V: Marshaller]: Marshaller[Map[K, V]] = new Marshaller[Map[K, V]] {
     def marshall(x: Map[K, V])(implicit jep: Jep) = x match {
-      case x: typed.Dict[K, V] => x.obj
+      case x: Dict[K, V] => x.obj
       case _ =>
         val pyDict = Object("{}")
         for ((k, v) <- x)

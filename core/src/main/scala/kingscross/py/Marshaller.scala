@@ -47,6 +47,10 @@ object Marshaller {
     def marshall(x: CharSequence)(implicit jep: Jep) = Expr("\"" + x + "\"") // TODO: escape
   }
 
+  implicit object pyExpr extends Marshaller[Expr] {
+    def marshall(x: Expr)(implicit jep: Jep) = x
+  }
+
   implicit def product2[A: Marshaller, B: Marshaller]: Marshaller[Product2[A, B]] =
     new Marshaller[Product2[A, B]] {
       def marshall(x: Product2[A, B])(implicit jep: Jep) = Object(s"(${x._1.py}, ${x._2.py})")
@@ -63,7 +67,7 @@ object Marshaller {
       case _ =>
         val pyList = Object("[]")
         for (e <- x)
-          jep.eval(s"${pyList.name}.append(${e.py})")
+          jep.eval(s"${pyList.pyName}.append(${e.py})")
         pyList
     }
   }
@@ -74,7 +78,7 @@ object Marshaller {
       case _ =>
         val pySet = Object("set()")
         for (e <- x)
-          jep.eval(s"${pySet.name}.add(${e.py})")
+          jep.eval(s"${pySet.pyName}.add(${e.py})")
         pySet
     }
   }
@@ -85,7 +89,7 @@ object Marshaller {
       case _ =>
         val pyDict = Object("{}")
         for ((k, v) <- x)
-          jep.eval(s"${pyDict.name}[${k.py}] = ${v.py}")
+          jep.eval(s"${pyDict.pyName}[${k.py}] = ${v.py}")
         pyDict
     }
   }

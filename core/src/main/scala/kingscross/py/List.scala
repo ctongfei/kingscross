@@ -1,7 +1,6 @@
 package kingscross.py
 
 import jep._
-
 import scala.collection._
 
 /**
@@ -13,7 +12,7 @@ class List[T: Marshaller : Unmarshaller](val obj: Object)(implicit jep: Jep) ext
 
   override def stringPrefix = "py.list"
 
-  def length = global.len(obj).get.asInstanceOf[Int]
+  def length = global.len(obj)._get.asInstanceOf[Int]
 
   def apply(idx: Int) = obj.__getitem__(Expr(idx.toString)).toScala[T]
 

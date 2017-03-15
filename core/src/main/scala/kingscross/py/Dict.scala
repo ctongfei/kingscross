@@ -1,7 +1,6 @@
 package kingscross.py
 
 import jep._
-
 import scala.collection._
 
 /**

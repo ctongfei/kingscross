@@ -27,22 +27,22 @@ class Expr private[py](val py: String)(implicit jep: Jep) {
   def !() = jep eval py
 
   def applyDynamic(method: String)(params: Expr*) =
-    Expr(s"($py).$method(${params.map(_.py).mkString(", ")})")
+    Object(s"($py).$method(${params.map(_.py).mkString(", ")})")
 
   def applyDynamicNamed(method: String)(params: (String, Expr)*) =
-    Expr(s"($py).$method(${params.map { case (k, w) => s"$k=${w.py}"}.mkString(", ")})")
+    Object(s"($py).$method(${params.map { case (k, w) => s"$k=${w.py}"}.mkString(", ")})")
 
   def selectDynamic(field: String) =
-    Expr(s"($py).$field")
+    Object(s"($py).$field")
 
   def updateDynamic(field: String)(value: Expr) =
-    Expr(s"($py).$field = ${value.py}")
+    Object(s"($py).$field = ${value.py}")
 
   def __getitem__(key: Expr) =
-    Expr(s"($py)[${key.py}]")
+    Object(s"($py)[${key.py}]")
 
   def __getitem__(idx: Int) =
-    Expr(s"($py)[$idx]")
+    Object(s"($py)[$idx]")
 
   def __setitem__(key: Expr)(value: Expr) =
     Expr(s"($py)[${key.py}] = ${value.py}").!()
@@ -54,10 +54,10 @@ class Expr private[py](val py: String)(implicit jep: Jep) {
 
   def unary_- = Expr(s"-($py)")
 
-  def +(that: Expr) = Expr(s"($py) + (${that.py})")
-  def -(that: Expr) = Expr(s"($py) - (${that.py})")
-  def *(that: Expr) = Expr(s"($py) * (${that.py})")
-  def /(that: Expr) = Expr(s"($py) / (${that.py})")
+  def +(that: Expr) = Object(s"($py) + (${that.py})")
+  def -(that: Expr) = Object(s"($py) - (${that.py})")
+  def *(that: Expr) = Object(s"($py) * (${that.py})")
+  def /(that: Expr) = Object(s"($py) / (${that.py})")
 
 }
 

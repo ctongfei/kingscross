@@ -10,16 +10,16 @@ class Set[T: Marshaller : Unmarshaller](val obj: Object)(implicit jep: Jep) exte
 
   override def stringPrefix = "py.set"
 
-  def contains(elem: T) = Object(s"(${elem.py}) in ${obj.name}").toScala[Boolean]
+  def contains(elem: T) = Object(s"(${elem.py}) in ${obj.pyName}").toScala[Boolean]
   def +=(elem: T) = {
-    jep eval s"${obj.name}.add(${elem.py})"
+    jep eval s"${obj.pyName}.add(${elem.py})"
     this
   }
   def -=(elem: T) = {
-    jep eval s"${obj.name}.remove(${elem.py})"
+    jep eval s"${obj.pyName}.remove(${elem.py})"
     this
   }
-  def iterator = new Iterator[T](Object(s"iter(${obj.name})"))
+  def iterator = new Iterator[T](Object(s"iter(${obj.pyName})"))
 }
 
 object Set {

@@ -14,12 +14,12 @@ class Iterator[T: Unmarshaller](val pyIter: Object)(implicit jep: Jep) extends s
     if (elem != null) true
     else {
       try {
-        val pyElem = Object(s"next(${pyIter.name})")
+        val pyElem = Object(s"next(${pyIter.pyName})")
         elem = pyElem.toScala[T]
         elem != null
       }
       catch {
-        case _: Exception => false //TODO: py.StopIteration
+        case _: Exception => false //TODO: kingscross.py.StopIteration
       }
     }
   }

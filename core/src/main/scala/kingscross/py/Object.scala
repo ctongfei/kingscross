@@ -7,19 +7,19 @@ import scala.language.dynamics
  * Represents a python object.
  * @author Tongfei Chen
  */
-class Object private(val name: String)(implicit jep: Jep) extends Expr(name) with Dynamic {
+class Object private(val pyName: String)(implicit jep: Jep) extends Expr(pyName) with Dynamic {
 
   /**
    * @return This Python object in JVM
    */
-  def get: Any = jep.getValue(py)
+  def _get: Any = jep.getValue(py)
 
   override def toObject = this
 
-  override def toString = jep.getValue(s"str($name)").asInstanceOf[String]
+  override def toString = jep.getValue(s"str($pyName)").asInstanceOf[String]
 
   override def finalize() = {
-    jep.eval(s"del $name")
+    jep.eval(s"del $pyName")
   }
 
 }

@@ -1,10 +1,50 @@
-### kingscross-py
+## kingscross
 
 Calling Python from Scala
 
 <img src="https://img0.etsystatic.com/151/0/9612812/il_570xN.1146611060_c3p5.jpg" width="200px"/>
 
-#### Type marshalling
+### Installation & Usage
+Add
+```scala
+"me.tongfei" %% "kingscross-core" % "0.1.0-SNAPSHOT"
+```
+and build [Jep](https://github.com/mrj0/jep), the underlying bridge between JVM and Python. Add the generated `jar` to the dependencies and the generated `jnilib`/`so` to the property `java.library.path` (`-Djava.library.path=/path/to/the/generated/jnilib`).
+
+### Overview
+`kingscross` revolves around two classes: `py.Expr` and `py.Object`. 
+
+`py.Expr` represents a Python expression in Scala: it can be created in the following ways:
+```scala
+val e = py.Expr("Python expression") // constructor
+val e = py"""Python expression""" // interpolator
+```
+An expression is not executed in the Python interpreter: it is merely a string saved in JVM. To run this, do one of the following:
+```scala
+e.!() // runs the expression in Python and discard its return value
+val o = e.!! // runs the expression and assign the return value to an object in Python. 
+// "o" is a handle to the Python object (typed as "py.Object").
+```
+Both `py.Expr` and `py.Object` (itself is a subtype of `py.Expr`) are both descendants of `scala.Dynamic`: you can call arbitrary functions on them and they'll be delegated to Python.
+
+### Features
+
+#### Python string interpolator `py`
+
+```scala
+val n = py"1 + 2" // n is a Python expression, typed as "py.Expr"
+py"""for x in range($n):
+    print(x)
+""".!() // .!() executes a Python expression. Notice the interpolated $n
+```
+Output:
+```
+0
+1
+2
+```
+
+#### Data interchanging between Python and Scala: Type marshalling
 
 Kingscross marshalls/unmarshalls the following type pairs between Python and Scala. 
 
@@ -24,3 +64,4 @@ Kingscross marshalls/unmarshalls the following type pairs between Python and Sca
 | scala.collection.Set[A]         | set                    | kingscross.py.Set[A]                  |
 | scala.collection.Map[A, B]      | dict                   | kingscross.py.Dict[A, B]              |
 | Array[Array[...[Array[R]]...]]  | numpy.ndarray          | Array[Array[...[Array[R]]...]]        |
+

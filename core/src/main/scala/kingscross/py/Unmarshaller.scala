@@ -21,18 +21,18 @@ trait Unmarshaller[+T] {
 object Unmarshaller {
 
   implicit object int extends Unmarshaller[Int] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = x.toObject._get.asInstanceOf[Int]
+    def unmarshall(x: Expr)(implicit jep: Jep) = x.!!._get.asInstanceOf[Int]
   }
 
   implicit object long extends Unmarshaller[Long] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = x.toObject._get match {
+    def unmarshall(x: Expr)(implicit jep: Jep) = x.!!._get match {
       case r: Int => r
       case r: Long => r
     }
   }
 
   implicit object double extends Unmarshaller[Double] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = x.toObject._get match {
+    def unmarshall(x: Expr)(implicit jep: Jep) = x.!!._get match {
       case r: Int => r
       case r: Float => r
       case r: Double => r
@@ -40,19 +40,29 @@ object Unmarshaller {
   }
 
   implicit object float extends Unmarshaller[Float] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = x.toObject._get match {
+    def unmarshall(x: Expr)(implicit jep: Jep) = x.!!._get match {
       case r: Int => r
       case r: Float => r
     }
   }
 
   implicit object boolean extends Unmarshaller[Boolean] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = x.toObject._get.asInstanceOf[Boolean]
+    def unmarshall(x: Expr)(implicit jep: Jep) = x.!!._get.asInstanceOf[Boolean]
   }
 
   implicit object string extends Unmarshaller[String] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = x.toObject._get.toString
+    def unmarshall(x: Expr)(implicit jep: Jep) = x.!!._get.toString
   }
+
+
+  implicit def function2[A: Marshaller, B: Unmarshaller]: Unmarshaller[A => B] =
+    new Unmarshaller[A => B] {
+      def unmarshall(x: Expr)(implicit jep: Jep) = { a: A =>
+        val pyA = a.toPython
+        val pyB = x.__call__(pyA)
+        pyB.toScala
+      }
+    }
 
   implicit def tuple2[A: Unmarshaller, B: Unmarshaller]: Unmarshaller[(A, B)] =
     new Unmarshaller[(A, B)] {

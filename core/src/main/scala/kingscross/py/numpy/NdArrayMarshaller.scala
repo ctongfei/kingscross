@@ -19,7 +19,7 @@ class NdArrayMarshaller[T, A](implicit nat: NdArrayType[T, A], dtype: DType[A]) 
 
 class NdArrayUnmarshaller[T, A](implicit nat: NdArrayType[T, A], dtype: DType[A]) extends Unmarshaller[T] {
   def unmarshall(x: Expr)(implicit jep: Jep) = {
-    val nd = jep.getValue(x.toObject.pyName).asInstanceOf[NDArray[Array[A]]]
+    val nd = jep.getValue(x.!!.pyName).asInstanceOf[NDArray[Array[A]]]
     nat.unflatten(nd.getData, nd.getDimensions: _*)
   }
 }

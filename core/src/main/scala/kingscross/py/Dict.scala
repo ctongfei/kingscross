@@ -39,7 +39,7 @@ class Dict[K : Unmarshaller : Marshaller, V: Marshaller : Unmarshaller](val obj:
 object Dict {
 
   implicit def unmarshaller[K: Marshaller: Unmarshaller, V: Marshaller : Unmarshaller]: Unmarshaller[Dict[K, V]] = new Unmarshaller[Dict[K, V]] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = new Dict[K, V](x.toObject)
+    def unmarshall(x: Expr)(implicit jep: Jep) = new Dict[K, V](x.!!)
   }
 
 }

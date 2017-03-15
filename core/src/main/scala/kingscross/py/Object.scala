@@ -14,7 +14,7 @@ class Object private(val pyName: String)(implicit jep: Jep) extends Expr(pyName)
    */
   def _get: Any = jep.getValue(py)
 
-  override def toObject = this
+  override def !! = this
 
   override def toString = jep.getValue(s"str($pyName)").asInstanceOf[String]
 
@@ -43,7 +43,7 @@ object Object {
   }
 
   implicit object unmarshaller extends Unmarshaller[Object] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = x.toObject
+    def unmarshall(x: Expr)(implicit jep: Jep) = x.!!
   }
 
 }

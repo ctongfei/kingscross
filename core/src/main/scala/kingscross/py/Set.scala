@@ -25,7 +25,7 @@ class Set[T: Marshaller : Unmarshaller](val obj: Object)(implicit jep: Jep) exte
 object Set {
 
   implicit def unmarshaller[T: Marshaller : Unmarshaller] = new Unmarshaller[Set[T]] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = new Set[T](x.toObject)
+    def unmarshall(x: Expr)(implicit jep: Jep) = new Set[T](x.!!)
   }
 
 }

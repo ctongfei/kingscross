@@ -30,7 +30,7 @@ class List[T: Marshaller : Unmarshaller](val obj: Object)(implicit jep: Jep) ext
 object List {
 
   implicit def unmarshaller[T: Marshaller: Unmarshaller]: Unmarshaller[List[T]] = new Unmarshaller[List[T]] {
-    def unmarshall(x: Expr)(implicit jep: Jep) = new List[T](x.toObject)
+    def unmarshall(x: Expr)(implicit jep: Jep) = new List[T](x.!!)
   }
 
 }

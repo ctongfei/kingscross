@@ -8,7 +8,7 @@ import scala.language.dynamics
  * @author Tongfei Chen
  * @since 0.1.0
  */
-class Expr private[py](val py: String)(implicit jep: Jep) {
+class Expr private[py](val py: String)(implicit jep: Jep) extends Dynamic {
 
   /**
    * Converts a Python reference to a Scala object.
@@ -19,7 +19,7 @@ class Expr private[py](val py: String)(implicit jep: Jep) {
    * Converts a Python expression to a Python object, hence giving it a name.
    * This operations caches the result of the expression, making it non-lazy.
    */
-  def toObject = Object(py)
+  def !! = Object(py)
 
   /**
    * Runs this expression in Python.

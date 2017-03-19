@@ -9,7 +9,7 @@ Add
 ```scala
 "me.tongfei" %% "kingscross-core" % "0.1.0-SNAPSHOT"
 ```
-to your dependencies and build [Jep](https://github.com/mrj0/jep), the underlying bridge between JVM and Python. Add the generated `jar` to the dependencies and the generated `jnilib`/`so` to the property `java.library.path` (`-Djava.library.path=/path/to/the/generated/jnilib`).
+build [Jep](https://github.com/mrj0/jep), the underlying bridge between JVM and Python. Add the generated `jar` to the dependencies and the generated `jnilib`/`so` to the property `java.library.path` (`-Djava.library.path=/path/to/the/generated/jnilib`).
 
 ### Overview
 `kingscross` revolves around two classes: `py.Expr` and `py.Object`. 
@@ -21,7 +21,7 @@ val e = py"""Python expression""" // interpolator
 ```
 An expression is not executed in the Python interpreter: it is merely a string saved in JVM. To run this, do one of the following:
 ```scala
-e.!() // runs the expression in Python and discard its return value
+e.! // runs the expression in Python and discard its return value
 val o = e.!! // runs the expression and assign the return value to an object in Python. 
 // "o" is a handle to the Python object (typed as "py.Object").
 ```

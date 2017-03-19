@@ -24,7 +24,7 @@ class Expr private[py](val py: String)(implicit jep: Jep) extends Dynamic {
   /**
    * Runs this expression in Python.
    */
-  def !() = {
+  def ! = {
     jep eval py
   }
 

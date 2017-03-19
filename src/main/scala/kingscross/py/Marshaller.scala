@@ -1,6 +1,7 @@
 package kingscross.py
 
 import jep._
+import kingscross.py.syntax._
 import kingscross.py.numpy._
 
 import scala.collection._
@@ -12,7 +13,8 @@ import scala.annotation._
  * @since 0.1.0
  */
 @implicitNotFound("Cannot marshall a Scala type ${T} to a Python representation.")
-trait Marshaller[-T] {
+trait Marshaller[T] {
+  //TODO: Should be contravariant, blocking on SI-2509
 
   /**
    * Converts a Scala object to a Python expression.
@@ -21,7 +23,7 @@ trait Marshaller[-T] {
 
 }
 
-object Marshaller {
+object Marshaller extends LowPriorityMarshaller {
 
   implicit object int extends Marshaller[Int] {
     def marshall(x: Int)(implicit jep: Jep) = Expr(s"$x")
@@ -43,13 +45,30 @@ object Marshaller {
     def marshall(x: Boolean)(implicit jep: Jep) = Expr(if (x) "True" else "False")
   }
 
+  implicit object char extends Marshaller[Char] {
+    def marshall(x: Char)(implicit jep: Jep) = Expr(s"'$x'")
+  }
+
   implicit object charSequence extends Marshaller[CharSequence] {
-    def marshall(x: CharSequence)(implicit jep: Jep) = Expr("\"" + x + "\"") // TODO: escape
+    def marshall(x: CharSequence)(implicit jep: Jep) = Object.fromJvm(x.toString)
+  }
+
+  implicit object string extends Marshaller[String] {
+    def marshall(x: String)(implicit jep: Jep) = Object.fromJvm(x)
   }
 
   implicit object pyExpr extends Marshaller[Expr] {
     def marshall(x: Expr)(implicit jep: Jep) = x
   }
+
+  implicit object pyObject extends Marshaller[Object] {
+    def marshall(x: Object)(implicit jep: Jep) = x
+  }
+
+  implicit def product1[A: Marshaller]: Marshaller[Product1[A]] =
+    new Marshaller[Product1[A]] {
+      def marshall(x: Product1[A])(implicit jep: Jep) = Object(s"(${x._1.py}, )")
+    }
 
   implicit def product2[A: Marshaller, B: Marshaller]: Marshaller[Product2[A, B]] =
     new Marshaller[Product2[A, B]] {
@@ -59,6 +78,45 @@ object Marshaller {
   implicit def product3[A: Marshaller, B: Marshaller, C: Marshaller]: Marshaller[Product3[A, B, C]] =
     new Marshaller[Product3[A, B, C]] {
       def marshall(x: Product3[A, B, C])(implicit jep: Jep) = Object(s"(${x._1.py}, ${x._2.py}, ${x._3.py})")
+    }
+
+  implicit def tuple1[A: Marshaller]: Marshaller[Tuple1[A]] =
+    new Marshaller[Tuple1[A]] {
+      def marshall(x: Tuple1[A])(implicit jep: Jep) = Object(s"(${x._1.py}, )")
+    }
+
+  implicit def tuple2[A: Marshaller, B: Marshaller]: Marshaller[Tuple2[A, B]] =
+    new Marshaller[Tuple2[A, B]] {
+      def marshall(x: Tuple2[A, B])(implicit jep: Jep) = Object(s"(${x._1.py}, ${x._2.py})")
+    }
+
+  implicit def tuple3[A: Marshaller, B: Marshaller, C: Marshaller]: Marshaller[Tuple3[A, B, C]] =
+    new Marshaller[Tuple3[A, B, C]] {
+      def marshall(x: Tuple3[A, B, C])(implicit jep: Jep) = Object(s"(${x._1.py}, ${x._2.py}, ${x._3.py})")
+    }
+
+  implicit def function0[A: Marshaller]: Marshaller[() => A] =
+    new Marshaller[() => A] {
+      def marshall(x: () => A)(implicit jep: Jep) = {
+        val f = Object.fromJvm(x)
+        py"lambda __x: $f.apply(__x)"
+      }
+    }
+
+  implicit def function1[A: Unmarshaller, B: Marshaller]: Marshaller[A => B] =
+    new Marshaller[A => B] {
+      def marshall(x: A => B)(implicit jep: Jep) = {
+        val f = Object.fromJvm(x)
+        py"lambda __x: $f.apply(__x)"
+      }
+    }
+
+  implicit def function2[A: Unmarshaller, B: Unmarshaller, C: Marshaller]: Marshaller[(A, B) => C] =
+    new Marshaller[(A, B) => C] {
+      def marshall(x: (A, B) => C)(implicit jep: Jep) = {
+        val f = Object.fromJvm(x)
+        py"lambda __x1, __x2: $f.apply(__x1, __x2)"
+      }
     }
 
   implicit def list[T: Marshaller]: Marshaller[Seq[T]] = new Marshaller[Seq[T]] {
@@ -102,5 +160,14 @@ object Marshaller {
   implicit def ndarrayLong[T](implicit nat: NdArrayType[T, Long]) = ndarray[T, Long](DType.int64, nat)
   implicit def ndarrayFloat[T](implicit nat: NdArrayType[T, Float]) = ndarray[T, Float](DType.float32, nat)
   implicit def ndarrayDouble[T](implicit nat: NdArrayType[T, Double]) = ndarray[T, Double](DType.float64, nat)
+
+}
+
+trait LowPriorityMarshaller {
+
+  //TODO: implicit resolution fail
+  object anyRef extends Marshaller[AnyRef] {
+    def marshall(x: AnyRef)(implicit jep: Jep) = Object.fromJvm(x)
+  }
 
 }

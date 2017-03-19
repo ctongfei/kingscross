@@ -22,11 +22,4 @@ package object py {
 
   def load(s: String)(implicit jep: Jep) = Module(s)
 
-  implicit def toPython[T](x: T)(implicit m: Marshaller[T], jep: Jep) = m marshall x
-
-  implicit class ToPython[T](val x: T)(implicit jep: Jep) {
-    def toPython(implicit m: Marshaller[T]) = m marshall x
-  }
-
-
 }

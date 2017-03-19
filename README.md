@@ -55,10 +55,15 @@ Kingscross marshalls/unmarshalls the following type pairs between Python and Sca
 | scala.Double                    | double                 | scala.Double                          |
 | scala.Float                     | float                  | scala.Float                           |
 | scala.Boolean                   | bool                   | scala.Boolean                         |
-| java.lang.CharSequence          | string                 | java.lang.String (scala.String)       |
-| scala.Product2[A, B]            | tuple                  | scala.Tuple2[A, B]                    |
-| scala.Product3[A, B, C]         | tuple                  | scala.Tuple3[A, B, C]                 |
-|                                 | object                 | kingscross.py.Object                  |
+| scala.Char                      | str                    |                                       |
+| java.lang.CharSequence          | str                    | java.lang.String (scala.String)       |
+| scala.Product1[A]               | tuple                  | scala.Tuple1[A]                       |
+| scala.Product2[A, B]            | tuple                  | (A, B)                                |
+| scala.Product3[A, B, C]         | tuple                  | (A, B, C)                             |
+| () => A                         | function               | () => A                               |
+| A => B                          | function               | A => B                                |
+| (A, B) => C                     | function               | (A, B) => C                           |
+| scala.AnyRef                    | object                 | kingscross.py.Object                  |
 |                                 | iterator               | kingscross.py.Iterator[A]             |
 | scala.collection.Seq[A]         | list                   | kingscross.py.List[A]                 |
 | scala.collection.Set[A]         | set                    | kingscross.py.Set[A]                  |

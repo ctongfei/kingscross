@@ -2,6 +2,7 @@ package kingscross.py
 
 import jep._
 import scala.collection._
+import kingscross.py.syntax._
 
 /**
  * Wraps a Python [[List]] as a Scala [[Seq]].

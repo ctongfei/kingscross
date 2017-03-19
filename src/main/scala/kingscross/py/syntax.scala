@@ -4,9 +4,14 @@ import jep._
 
 /**
  * @author Tongfei Chen
- * @since 0.1.0
  */
-object Interpolator {
+object syntax {
+
+  implicit def toPython[T](x: T)(implicit m: Marshaller[T], jep: Jep) = m marshall x
+
+  implicit class ToPython[T](val x: T)(implicit jep: Jep) {
+    def toPython(implicit m: Marshaller[T]) = m marshall x
+  }
 
   implicit class PyInterpolator(val sc: StringContext)(implicit jep: Jep) {
 
@@ -17,4 +22,5 @@ object Interpolator {
       new Expr(sc.s(args.map(arg => s"(${arg.py})"): _*))
 
   }
+
 }

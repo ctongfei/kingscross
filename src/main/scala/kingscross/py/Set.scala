@@ -1,6 +1,7 @@
 package kingscross.py
 
 import jep._
+import kingscross.py.syntax._
 
 /**
  * Wraps a Python [[Set]] as a Scala [[Set]].

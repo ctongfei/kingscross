@@ -28,9 +28,18 @@ object Object {
 
   @volatile private[this] var pyObjectId = 0
 
+  /** Evaluates a Python expression, represented as a string, to a Python object. */
   def apply(py: String)(implicit jep: Jep): Object = {
     val id = s"__$pyObjectId"
     jep.eval(s"$id = $py")
+    pyObjectId += 1
+    new Object(id)
+  }
+
+  /** Directly forwards a JVM object ([[java.lang.Object]]) to the Python side. */
+  def fromJvm(x: AnyRef)(implicit jep: Jep): Object = {
+    val id = s"__$pyObjectId"
+    jep.set(id, x)
     pyObjectId += 1
     new Object(id)
   }

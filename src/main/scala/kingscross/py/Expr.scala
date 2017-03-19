@@ -24,7 +24,9 @@ class Expr private[py](val py: String)(implicit jep: Jep) extends Dynamic {
   /**
    * Runs this expression in Python.
    */
-  def !() = jep eval py
+  def !() = {
+    jep eval py
+  }
 
   def applyDynamic(method: String)(params: Expr*) =
     Object(s"($py).$method(${params.map(_.py).mkString(", ")})")

@@ -9,6 +9,7 @@ import scala.language.dynamics
 class Global(implicit jep: Jep) extends Dynamic {
 
   jep eval "import sys"
+  jep eval "import time"
 
   val pythonVersion = Expr("sys.version_info[0]").toScala[String]
 

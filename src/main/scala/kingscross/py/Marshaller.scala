@@ -23,7 +23,7 @@ trait Marshaller[T] {
 
 }
 
-object Marshaller extends LowPriorityMarshaller {
+object Marshaller {
 
   implicit object int extends Marshaller[Int] {
     def marshall(x: Int)(implicit jep: Jep) = Expr(s"$x")
@@ -65,6 +65,10 @@ object Marshaller extends LowPriorityMarshaller {
     def marshall(x: Object)(implicit jep: Jep) = x
   }
 
+  implicit object anyRef extends Marshaller[AnyRef] {
+    def marshall(x: AnyRef)(implicit jep: Jep) = Object.fromJvm(x)
+  }
+
   implicit def product1[A: Marshaller]: Marshaller[Product1[A]] =
     new Marshaller[Product1[A]] {
       def marshall(x: Product1[A])(implicit jep: Jep) = Object(s"(${x._1.py}, )")
@@ -98,24 +102,48 @@ object Marshaller extends LowPriorityMarshaller {
   implicit def function0[A: Marshaller]: Marshaller[() => A] =
     new Marshaller[() => A] {
       def marshall(x: () => A)(implicit jep: Jep) = {
-        val f = Object.fromJvm(x)
-        py"lambda __x: $f.apply(__x)"
+        val o = Object("None")
+        val f = Object.fromJvm(new Function0Runner(o, x))
+        val pyFunc = py"""
+          $f.run()
+          return $o
+        """
+        Function.define()(pyFunc.py).self
       }
     }
 
   implicit def function1[A: Unmarshaller, B: Marshaller]: Marshaller[A => B] =
     new Marshaller[A => B] {
       def marshall(x: A => B)(implicit jep: Jep) = {
-        val f = Object.fromJvm(x)
-        py"lambda __x: $f.apply(__x)"
+        val i = Object("None") // create input placeholder
+        val o = Object("None") // create output placeholder
+        val f = Object.fromJvm(new Function1Runner(i, o, x)) // to Python
+        val pyFunc = py"""
+          global $i
+          $i = a
+          $f.run()
+          return $o
+        """ // write to input placeholder, run, and then return output placeholder
+        Function.define("a")(pyFunc.py).self
       }
     }
 
   implicit def function2[A: Unmarshaller, B: Unmarshaller, C: Marshaller]: Marshaller[(A, B) => C] =
     new Marshaller[(A, B) => C] {
       def marshall(x: (A, B) => C)(implicit jep: Jep) = {
-        val f = Object.fromJvm(x)
-        py"lambda __x1, __x2: $f.apply(__x1, __x2)"
+        val ia = Object("None")
+        val ib = Object("None")
+        val o = Object("None")
+        val f = Object.fromJvm(new Function2Runner(ia, ib, o, x))
+        val pyFunc = py"""
+          global $ia
+          global $ib
+          $ia = a
+          $ib = b
+          $f.run()
+          return $o
+        """
+        Function.define("a", "b")(pyFunc.py).self
       }
     }
 
@@ -160,14 +188,5 @@ object Marshaller extends LowPriorityMarshaller {
   implicit def ndarrayLong[T](implicit nat: NdArrayType[T, Long]) = ndarray[T, Long](DType.int64, nat)
   implicit def ndarrayFloat[T](implicit nat: NdArrayType[T, Float]) = ndarray[T, Float](DType.float32, nat)
   implicit def ndarrayDouble[T](implicit nat: NdArrayType[T, Double]) = ndarray[T, Double](DType.float64, nat)
-
-}
-
-trait LowPriorityMarshaller {
-
-  //TODO: implicit resolution fail
-  object anyRef extends Marshaller[AnyRef] {
-    def marshall(x: AnyRef)(implicit jep: Jep) = Object.fromJvm(x)
-  }
 
 }

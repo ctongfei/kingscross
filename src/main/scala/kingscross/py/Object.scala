@@ -7,7 +7,7 @@ import scala.language.dynamics
  * Represents a python object.
  * @author Tongfei Chen
  */
-class Object private(val pyName: String)(implicit jep: Jep) extends Expr(pyName) with Dynamic {
+class Object private(py: String)(implicit jep: Jep) extends Expr(py) with Dynamic {
 
   /**
    * @return This Python object in JVM
@@ -16,10 +16,10 @@ class Object private(val pyName: String)(implicit jep: Jep) extends Expr(pyName)
 
   override def !! = this
 
-  override def toString = jep.getValue(s"str($pyName)").asInstanceOf[String]
+  override def toString = jep.getValue(s"str($py)").asInstanceOf[String]
 
   override def finalize() = {
-    jep.eval(s"del $pyName")
+    jep.eval(s"del $py")
   }
 
 }
@@ -27,6 +27,12 @@ class Object private(val pyName: String)(implicit jep: Jep) extends Expr(pyName)
 object Object {
 
   @volatile private[this] var pyObjectId = 0
+
+  def nextId = {
+    val id = s"__$pyObjectId"
+    pyObjectId += 1
+    id
+  }
 
   /** Evaluates a Python expression, represented as a string, to a Python object. */
   def apply(py: String)(implicit jep: Jep): Object = {

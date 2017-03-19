@@ -11,6 +11,13 @@ Add
 ```
 build [Jep](https://github.com/mrj0/jep), the underlying bridge between JVM and Python. Add the generated `jar` to the dependencies and the generated `jnilib`/`so` to the property `java.library.path` (`-Djava.library.path=/path/to/the/generated/jnilib`).
 
+Import 
+```scala
+import kingscross._
+import kingscross.py.syntax._ // includes the "py" interpolator and the "toScala"/"toPython" methods.
+```
+to start using kingscross.
+
 ### Overview
 `kingscross` revolves around two classes: `py.Expr` and `py.Object`. 
 

@@ -1,15 +1,13 @@
+<img align="right" src="https://img0.etsystatic.com/151/0/9612812/il_570xN.1146611060_c3p5.jpg" height="100px" style="padding-left: 20px"/>
 ## kingscross
-
 Calling Python from Scala
 
-<img src="https://img0.etsystatic.com/151/0/9612812/il_570xN.1146611060_c3p5.jpg" width="200px"/>
-
-### Installation & Usage
+### Installation
 Add
 ```scala
 "me.tongfei" %% "kingscross-core" % "0.1.0-SNAPSHOT"
 ```
-and build [Jep](https://github.com/mrj0/jep), the underlying bridge between JVM and Python. Add the generated `jar` to the dependencies and the generated `jnilib`/`so` to the property `java.library.path` (`-Djava.library.path=/path/to/the/generated/jnilib`).
+to your dependencies and build [Jep](https://github.com/mrj0/jep), the underlying bridge between JVM and Python. Add the generated `jar` to the dependencies and the generated `jnilib`/`so` to the property `java.library.path` (`-Djava.library.path=/path/to/the/generated/jnilib`).
 
 ### Overview
 `kingscross` revolves around two classes: `py.Expr` and `py.Object`. 
@@ -33,9 +31,10 @@ Both `py.Expr` and `py.Object` (itself is a subtype of `py.Expr`) are both desce
 
 ```scala
 val n = py"1 + 2" // n is a Python expression, typed as "py.Expr"
-py"""for x in range($n):
-    print(x)
-""".!() // .!() executes a Python expression. Notice the interpolated $n
+py"""
+  for x in range($n):
+  print(x)
+""".! // .! executes a Python expression. Notice the interpolated $n
 ```
 Output:
 ```

@@ -120,11 +120,11 @@ object Marshaller {
         val f = Object.fromJvm(new Function1Runner(i, o, x)) // to Python
         val pyFunc = py"""
           global $i
-          $i = a
+          $i = _arg1
           $f.run()
           return $o
         """ // write to input placeholder, run, and then return output placeholder
-        Function.define("a")(pyFunc.py).self
+        Function.define("_arg1")(pyFunc.py).self
       }
     }
 
@@ -138,12 +138,34 @@ object Marshaller {
         val pyFunc = py"""
           global $ia
           global $ib
-          $ia = a
-          $ib = b
+          $ia = _arg1
+          $ib = _arg2
           $f.run()
           return $o
         """
-        Function.define("a", "b")(pyFunc.py).self
+        Function.define("_arg1", "_arg2")(pyFunc.py).self
+      }
+    }
+
+  implicit def function3[A: Unmarshaller, B: Unmarshaller, C: Unmarshaller, D: Marshaller]: Marshaller[(A, B, C) => D] =
+    new Marshaller[(A, B, C) => D] {
+      def marshall(x: (A, B, C) => D)(implicit jep: Jep) = {
+        val ia = Object("None")
+        val ib = Object("None")
+        val ic = Object("None")
+        val o = Object("None")
+        val f = Object.fromJvm(new Function3Runner(ia, ib, ic, o, x))
+        val pyFunc = py"""
+          global $ia
+          global $ib
+          global $ic
+          $ia = _arg1
+          $ib = _arg2
+          $ic = _arg3
+          $f.run()
+          return $o
+        """
+        Function.define("_arg1", "_arg2", "_arg3")(pyFunc.py).self
       }
     }
 

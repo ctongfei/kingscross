@@ -9,7 +9,7 @@ import kingscross.py.syntax._
 private[py] class Function0Runner[+O: Marshaller](o: Object, f: () => O)(implicit jep: Jep) {
   def run() = {
     val b = f().toPython
-    py"$o = $b".!()
+    py"$o = $b".!
   }
 }
 
@@ -19,7 +19,7 @@ private[py] class Function1Runner[-I: Unmarshaller, +O: Marshaller]
   def run() = {
     val a = i.toScala[I]
     val b = f(a).toPython
-    py"$o = $b".!()
+    py"$o = $b".!
   }
 }
 
@@ -30,7 +30,18 @@ private[py] class Function2Runner[-I1: Unmarshaller, -I2: Unmarshaller, +O: Mars
     val a1 = i1.toScala[I1]
     val a2 = i2.toScala[I2]
     val b = f(a1, a2).toPython
-    py"$o = $b".!()
+    py"$o = $b".!
   }
 }
 
+private[py] class Function3Runner[-I1: Unmarshaller, -I2: Unmarshaller, -I3: Unmarshaller, +O: Marshaller]
+  (i1: Object, i2: Object, i3: Object, o: Object, f: (I1, I2, I3) => O)(implicit jep: Jep)
+{
+  def run() = {
+    val a1 = i1.toScala[I1]
+    val a2 = i2.toScala[I2]
+    val a3 = i3.toScala[I3]
+    val b = f(a1, a2, a3).toPython
+    py"$o = $b".!
+  }
+}

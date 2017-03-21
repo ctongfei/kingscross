@@ -9,7 +9,6 @@ import scala.annotation._
 /**
  * Represents a strategy of unmarshalling a Python object to a Scala object of a specific type.
  * @author Tongfei Chen
- *
  */
 @implicitNotFound("Cannot unmarshall a Python object to Scala type ${T}.")
 trait Unmarshaller[+T] {
@@ -81,6 +80,17 @@ object Unmarshaller {
         val pyB = b.toPython
         val pyC = x.__call__(pyA, pyB)
         pyC.toScala[C]
+      }
+    }
+
+  implicit def function3[A: Marshaller, B: Marshaller, C: Marshaller, D: Unmarshaller]: Unmarshaller[(A, B, C) => D] =
+    new Unmarshaller[(A, B, C) => D] {
+      def unmarshall(x: Expr)(implicit jep: Jep) = (a: A, b: B, c: C) => {
+        val pyA = a.toPython
+        val pyB = b.toPython
+        val pyC = c.toPython
+        val pyD = x.__call__(pyA, pyB, pyC)
+        pyD.toScala[D]
       }
     }
 

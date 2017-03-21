@@ -19,10 +19,10 @@ class List[T: Marshaller : Unmarshaller](val obj: Object)(implicit jep: Jep) ext
 
   def iterator = new Iterator[T](Object(s"iter(${obj.py})"))
 
-  def update(idx: Int, elem: T) = obj.__setitem__(Expr(idx.toString))(elem.toPython).!()
+  def update(idx: Int, elem: T) = obj.__setitem__(Expr(idx.toString))(elem.toPython).!
 
   def +=(elem: T) = {
-    obj.append(elem).!()
+    obj.append(elem).!
     this
   }
 

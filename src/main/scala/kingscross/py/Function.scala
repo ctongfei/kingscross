@@ -4,7 +4,9 @@ import jep._
 import kingscross.py.syntax._
 
 /**
+ * Encapsulates a Python function.
  * @author Tongfei Chen
+ * @since 0.1.0
  */
 class Function private(val args: Seq[String], val name: String)(implicit jep: Jep) {
 
@@ -29,7 +31,7 @@ object Function {
     val pyDef1 = s"def $id(${args.mkString(", ")}):"
     val pyDefs = body.split("\n").map(l => "    " + l).mkString("\n")
     val pyDef = s"$pyDef1\n$pyDefs\n"
-    Expr(pyDef).!()
+    Expr(pyDef).!
     new Function(args, id)
   }
 

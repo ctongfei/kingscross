@@ -7,7 +7,7 @@ Calling Python from Scala
 ### Installation
 Add
 ```scala
-"me.tongfei" %% "kingscross-core" % "0.1.0-SNAPSHOT"
+"me.tongfei" %% "kingscross" % "0.1.0-SNAPSHOT"
 ```
 build [Jep](https://github.com/mrj0/jep), the underlying bridge between JVM and Python. Add the generated `jar` to the dependencies and the generated `jnilib`/`so` to the property `java.library.path` (`-Djava.library.path=/path/to/the/generated/jnilib`).
 
@@ -56,25 +56,26 @@ Output:
 
 Kingscross marshalls/unmarshalls the following type pairs between Python and Scala. 
 
-| Scala type                      | marshalled Python type | unmarshalled Scala type               |
-|---------------------------------|------------------------|---------------------------------------|
-| scala.Int                       | int                    | scala.Int                             |
-| scala.Long                      | long                   | scala.Long                            |
-| scala.Double                    | double                 | scala.Double                          |
-| scala.Float                     | float                  | scala.Float                           |
-| scala.Boolean                   | bool                   | scala.Boolean                         |
-| scala.Char                      | str                    |                                       |
-| java.lang.CharSequence          | str                    | java.lang.String (scala.String)       |
-| scala.Product1[A]               | tuple                  | scala.Tuple1[A]                       |
-| scala.Product2[A, B]            | tuple                  | (A, B)                                |
-| scala.Product3[A, B, C]         | tuple                  | (A, B, C)                             |
-| () => A                         | function               | () => A                               |
-| A => B                          | function               | A => B                                |
-| (A, B) => C                     | function               | (A, B) => C                           |
-| scala.AnyRef                    | object                 | kingscross.py.Object                  |
-|                                 | iterator               | kingscross.py.Iterator[A]             |
-| scala.collection.Seq[A]         | list                   | kingscross.py.List[A]                 |
-| scala.collection.Set[A]         | set                    | kingscross.py.Set[A]                  |
-| scala.collection.Map[A, B]      | dict                   | kingscross.py.Dict[A, B]              |
-| Array[Array[...[Array[R]]...]]  | numpy.ndarray          | Array[Array[...[Array[R]]...]]        |
+| Scala type                       | marshalled Python type  | unmarshalled Scala type               |
+|----------------------------------|-------------------------|---------------------------------------|
+| `scala.Int                      `| `int                   `| `scala.Int                           `|
+| `scala.Long                     `| `long                  `| `scala.Long                          `|
+| `scala.Double                   `| `double                `| `scala.Double                        `|
+| `scala.Float                    `| `float                 `| `scala.Float                         `|
+| `scala.Boolean                  `| `bool                  `| `scala.Boolean                       `|
+| `scala.Char                     `| `str                   `| `                                    `|
+| `java.lang.CharSequence         `| `str                   `| `java.lang.String (scala.String)     `|
+| `scala.Product1[A]              `| `tuple                 `| `scala.Tuple1[A]                     `|
+| `scala.Product2[A, B]           `| `tuple                 `| `(A, B)                              `|
+| `scala.Product3[A, B, C]        `| `tuple                 `| `(A, B, C)                           `|
+| `() => A                        `| `function              `| `() => A                             `|
+| `(A) => B                       `| `function              `| `(A) => B                            `|
+| `(A, B) => C                    `| `function              `| `(A, B) => C                         `|
+| `(A, B, C) => D                 `| `function              `| `(A, B, C) => D                      `|
+| `scala.AnyRef                   `| `object                `| `kingscross.py.Object                `|
+|                                  | `iterator              `| `kingscross.py.Iterator[A]           `|
+| `scala.collection.Seq[A]        `| `list                  `| `kingscross.py.List[A]               `|
+| `scala.collection.Set[A]        `| `set                   `| `kingscross.py.Set[A]                `|
+| `scala.collection.Map[A, B]     `| `dict                  `| `kingscross.py.Dict[A, B]            `|
+| `Array[Array[...[Array[R]]...]] `| `numpy.ndarray         `| `Array[Array[...[Array[R]]...]]      `|
 

@@ -16,7 +16,7 @@ class Expr private[py](val py: String)(implicit jep: Jep) extends Dynamic {
   def toScala[T](implicit u: Unmarshaller[T]): T = u unmarshall this
 
   /**
-   * Converts a Python expression to a Python object, hence giving it a name.
+   * Runs this expresion in Python and saves the result to a Python object.
    * This operations caches the result of the expression, making it non-lazy.
    */
   def !! = Object(py)
@@ -24,9 +24,7 @@ class Expr private[py](val py: String)(implicit jep: Jep) extends Dynamic {
   /**
    * Runs this expression in Python.
    */
-  def ! = {
-    jep eval py
-  }
+  def ! = jep eval py
 
   def applyDynamic(method: String)(params: Expr*) =
     Object(s"($py).$method(${params.map(_.py).mkString(", ")})")
@@ -47,10 +45,10 @@ class Expr private[py](val py: String)(implicit jep: Jep) extends Dynamic {
     Object(s"($py)[$idx]")
 
   def __setitem__(key: Expr)(value: Expr) =
-    Expr(s"($py)[${key.py}] = ${value.py}").!()
+    Expr(s"($py)[${key.py}] = ${value.py}").!
 
   def __setitem__(idx: Int)(value: Expr) =
-    Expr(s"($py)[$idx] = ${value.py}").!()
+    Expr(s"($py)[$idx] = ${value.py}").!
 
   def unary_+ = Expr(s"+($py)")
 

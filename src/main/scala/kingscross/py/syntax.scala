@@ -26,7 +26,7 @@ object syntax {
       }: _*)
       val lines = body.split("\n").filterNot(_.trim == "")
       val indent = lines.map(_.indexWhere(_ != ' ')).min
-      val r = lines map { _ drop indent} mkString "\n"
+      val r = lines map { _ drop indent } mkString "\n"
       new Expr(r)
     }
 

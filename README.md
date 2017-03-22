@@ -9,7 +9,7 @@ Add
 ```scala
 "me.tongfei" %% "kingscross" % "0.1.0-SNAPSHOT"
 ```
-build [Jep](https://github.com/mrj0/jep), the underlying bridge between JVM and Python. Add the generated `jar` to the dependencies and the generated `jnilib`/`so` to the property `java.library.path` (`-Djava.library.path=/path/to/the/generated/jnilib`).
+and build [Jep](https://github.com/mrj0/jep), the underlying bridge between JVM and Python. Add the generated `jar` to the dependencies and the generated `jnilib`/`so` to the property `java.library.path` (`-Djava.library.path=/path/to/the/generated/jnilib`).
 
 Import 
 ```scala
@@ -60,8 +60,7 @@ Kingscross marshalls/unmarshalls the following type pairs between Python and Sca
 |----------------------------------|-------------------------|---------------------------------------|
 | `scala.Int                      `| `int                   `| `scala.Int                           `|
 | `scala.Long                     `| `long                  `| `scala.Long                          `|
-| `scala.Double                   `| `double                `| `scala.Double                        `|
-| `scala.Float                    `| `float                 `| `scala.Float                         `|
+| `scala.Double` / `scala.Float   `| `double                `| `scala.Double` / `scala.Float        `|
 | `scala.Boolean                  `| `bool                  `| `scala.Boolean                       `|
 | `scala.Char                     `| `str                   `| `                                    `|
 | `java.lang.CharSequence         `| `str                   `| `java.lang.String (scala.String)     `|
@@ -77,5 +76,3 @@ Kingscross marshalls/unmarshalls the following type pairs between Python and Sca
 | `scala.collection.Seq[A]        `| `list                  `| `kingscross.py.List[A]               `|
 | `scala.collection.Set[A]        `| `set                   `| `kingscross.py.Set[A]                `|
 | `scala.collection.Map[A, B]     `| `dict                  `| `kingscross.py.Dict[A, B]            `|
-| `Array[Array[...[Array[R]]...]] `| `numpy.ndarray         `| `Array[Array[...[Array[R]]...]]      `|
-

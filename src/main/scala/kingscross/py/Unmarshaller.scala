@@ -1,7 +1,6 @@
 package kingscross.py
 
 import jep._
-import kingscross.py.numpy._
 import kingscross.py.syntax._
 
 import scala.annotation._
@@ -109,12 +108,4 @@ object Unmarshaller {
       def unmarshall(x: Expr)(implicit jep: Jep) = (x.__getitem__(0).toScala[A], x.__getitem__(1).toScala[B], x.__getitem__(2).toScala[C])
     }
 
-  // Scala compiler cannot infer this unmarshaller correctly
-  def ndarray[T, A : DType](implicit nat: NdArrayType[T, A]): Unmarshaller[T] =
-    new NdArrayUnmarshaller[T, A]
-
-  implicit def ndarrayInt[T](implicit nat: NdArrayType[T, Int]) = ndarray[T, Int](DType.int32, nat)
-  implicit def ndarrayLong[T](implicit nat: NdArrayType[T, Long]) = ndarray[T, Long](DType.int64, nat)
-  implicit def ndarrayFloat[T](implicit nat: NdArrayType[T, Float]) = ndarray[T, Float](DType.float32, nat)
-  implicit def ndarrayDouble[T](implicit nat: NdArrayType[T, Double]) = ndarray[T, Double](DType.float64, nat)
 }

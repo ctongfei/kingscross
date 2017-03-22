@@ -202,13 +202,4 @@ object Marshaller {
     }
   }
 
-  // Scala compiler cannot infer this marshaller correctly
-  def ndarray[T, A : DType](implicit nat: NdArrayType[T, A]): Marshaller[T] =
-    new NdArrayMarshaller[T, A]
-
-  implicit def ndarrayInt[T](implicit nat: NdArrayType[T, Int]) = ndarray[T, Int](DType.int32, nat)
-  implicit def ndarrayLong[T](implicit nat: NdArrayType[T, Long]) = ndarray[T, Long](DType.int64, nat)
-  implicit def ndarrayFloat[T](implicit nat: NdArrayType[T, Float]) = ndarray[T, Float](DType.float32, nat)
-  implicit def ndarrayDouble[T](implicit nat: NdArrayType[T, Double]) = ndarray[T, Double](DType.float64, nat)
-
 }

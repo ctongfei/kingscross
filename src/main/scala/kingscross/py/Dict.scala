@@ -5,7 +5,7 @@ import scala.collection._
 import kingscross.py.syntax._
 
 /**
- * Wraps a Python [[Dict]] as a Scala [[Map]].
+ * Wraps a Python [[Dict]] as a Scala mutable [[Map]].
  * @author Tongfei Chen
  * @since 0.1.0
  */

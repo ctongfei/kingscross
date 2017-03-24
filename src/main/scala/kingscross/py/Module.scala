@@ -17,7 +17,7 @@ class Module private(val name: String)(implicit jep: Jep) extends Dynamic {
       Object(s"$name.$method(${params.map(_.py).mkString(", ")})")
   }
 
-  def selectDynamic(field: String) = Object(s"$name.$field")
+  def selectDynamic(field: String) = Expr(s"$name.$field").!!
 
   def updateDynamic(field: String)(value: Expr) = jep eval s"$name.$field = ${value.py}"
 

@@ -2,7 +2,6 @@ package kingscross.py
 
 import jep._
 import kingscross.py.syntax._
-import kingscross.py.numpy._
 
 import scala.collection._
 import scala.annotation._
@@ -23,7 +22,7 @@ trait Marshaller[T] {
 
 }
 
-object Marshaller {
+object Marshaller extends LowPriorityMarshallers {
 
   implicit object int extends Marshaller[Int] {
     def marshall(x: Int)(implicit jep: Jep) = Expr(s"$x")
@@ -65,10 +64,6 @@ object Marshaller {
     def marshall(x: Object)(implicit jep: Jep) = x
   }
 
-  implicit object anyRef extends Marshaller[AnyRef] {
-    def marshall(x: AnyRef)(implicit jep: Jep) = Object.fromJvm(x)
-  }
-
   implicit def product1[A: Marshaller]: Marshaller[Product1[A]] =
     new Marshaller[Product1[A]] {
       def marshall(x: Product1[A])(implicit jep: Jep) = Object(s"(${x._1.py}, )")
@@ -98,6 +93,43 @@ object Marshaller {
     new Marshaller[Tuple3[A, B, C]] {
       def marshall(x: Tuple3[A, B, C])(implicit jep: Jep) = Object(s"(${x._1.py}, ${x._2.py}, ${x._3.py})")
     }
+
+  implicit def list[T: Marshaller]: Marshaller[Seq[T]] = new Marshaller[Seq[T]] {
+    def marshall(x: Seq[T])(implicit jep: Jep) = x match {
+      case x: List[T] => x.obj
+      case _ =>
+        val pyList = Object("[]")
+        for (e <- x)
+          jep.eval(s"${pyList.py}.append(${e.py})")
+        pyList
+    }
+  }
+
+  implicit def set[T: Marshaller]: Marshaller[scala.collection.Set[T]] = new Marshaller[scala.collection.Set[T]] {
+    def marshall(x: scala.collection.Set[T])(implicit jep: Jep) = x match {
+      case x: Set[T] => x.obj
+      case _ =>
+        val pySet = Object("set()")
+        for (e <- x)
+          jep.eval(s"${pySet.py}.add(${e.py})")
+        pySet
+    }
+  }
+
+  implicit def map[K: Marshaller, V: Marshaller]: Marshaller[Map[K, V]] = new Marshaller[Map[K, V]] {
+    def marshall(x: Map[K, V])(implicit jep: Jep) = x match {
+      case x: Dict[K, V] => x.obj
+      case _ =>
+        val pyDict = Object("{}")
+        for ((k, v) <- x)
+          jep.eval(s"${pyDict.py}[${k.py}] = ${v.py}")
+        pyDict
+    }
+  }
+
+}
+
+trait LowPriorityMarshallers extends EvenLowerPriorityMarshallers {
 
   implicit def function0[A: Marshaller]: Marshaller[() => A] =
     new Marshaller[() => A] {
@@ -168,38 +200,11 @@ object Marshaller {
         Function.define("_arg1", "_arg2", "_arg3")(pyFunc.py).self
       }
     }
+}
 
-  implicit def list[T: Marshaller]: Marshaller[Seq[T]] = new Marshaller[Seq[T]] {
-    def marshall(x: Seq[T])(implicit jep: Jep) = x match {
-      case x: List[T] => x.obj
-      case _ =>
-        val pyList = Object("[]")
-        for (e <- x)
-          jep.eval(s"${pyList.pyName}.append(${e.py})")
-        pyList
-    }
+trait EvenLowerPriorityMarshallers {
+
+  implicit object anyRef extends Marshaller[AnyRef] {
+    def marshall(x: AnyRef)(implicit jep: Jep) = Object.fromJvm(x)
   }
-
-  implicit def set[T: Marshaller]: Marshaller[scala.collection.Set[T]] = new Marshaller[scala.collection.Set[T]] {
-    def marshall(x: scala.collection.Set[T])(implicit jep: Jep) = x match {
-      case x: Set[T] => x.obj
-      case _ =>
-        val pySet = Object("set()")
-        for (e <- x)
-          jep.eval(s"${pySet.pyName}.add(${e.py})")
-        pySet
-    }
-  }
-
-  implicit def map[K: Marshaller, V: Marshaller]: Marshaller[Map[K, V]] = new Marshaller[Map[K, V]] {
-    def marshall(x: Map[K, V])(implicit jep: Jep) = x match {
-      case x: Dict[K, V] => x.obj
-      case _ =>
-        val pyDict = Object("{}")
-        for ((k, v) <- x)
-          jep.eval(s"${pyDict.pyName}[${k.py}] = ${v.py}")
-        pyDict
-    }
-  }
-
 }

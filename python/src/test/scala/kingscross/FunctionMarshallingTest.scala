@@ -1,6 +1,8 @@
 package kingscross
 
 import jep._
+import kingscross.python._
+import kingscross.python.syntax._
 import org.scalatest._
 
 /**
@@ -8,7 +10,7 @@ import org.scalatest._
  */
 class FunctionMarshallingTest extends FunSuite {
 
-  val py = Python()
+  implicit val py = Python()
   import py._
 
 

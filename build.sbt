@@ -44,8 +44,8 @@ lazy val common = (project in file("common"))
     .settings(commonSettings: _*)
     .settings(
       name := "kingscross-common",
-      version := "0.1.0",
-      isSnapshot := false
+      version := "0.1.0-SNAPSHOT",
+      isSnapshot := true
     )
 
 lazy val python = (project in file("python"))

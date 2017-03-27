@@ -7,25 +7,16 @@ import scala.language.higherKinds
  * @author Tongfei Chen
  * @since 0.1.0
  */
-trait Interpreter { self =>
+trait Interpreter {
 
-  type Expr <: common.Expr[this.type]
-
-  type Ref <: common.Ref[this.type] with Expr
-
-  type Package <: common.Package[this.type]
-
-  type Marshaller[T] <: common.Marshaller[this.type, T]
-
-  type Unmarshaller[T] <: common.Unmarshaller[this.type, T]
+  type Expr
+  type Ref
+  type Package
 
   def newId: String
 
   def setRaw(s: String, v: Any)
   def getRaw(s: String): Any
-
-  def set[A](s: String, v: A)(implicit m: Marshaller[A]) = newRef(s, m.marshall(v).expr)
-  def get[A](s: String)(implicit u: Unmarshaller[A]) = u.unmarshall(getRef(s))
 
   object rawVariables {
     def apply(s: String) = getRaw(s)
@@ -48,7 +39,5 @@ trait Interpreter { self =>
 
   /** Loads a package given the package name. */
   def loadPackage(s: String): Package
-
-
 
 }

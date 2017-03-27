@@ -1,28 +1,24 @@
 import sbt.Keys._
 
-name := "kingscross"
+lazy val commonSettings = Seq(
+  organization := "me.tongfei",
+  scalaVersion := "2.11.8",
+  crossScalaVersions := Seq("2.11.8", "2.12.1"),
 
-organization := "me.tongfei"
-version := "0.1.0-SNAPSHOT"
-isSnapshot := true
-scalaVersion := "2.11.8"
-crossScalaVersions := Seq("2.11.8", "2.12.1")
+  libraryDependencies += "org.scala-lang"  % "scala-reflect" % scalaVersion.value,
+  libraryDependencies += "org.scalatest"  %% "scalatest"     % "3.0.1"             % Test,
 
-libraryDependencies += "org.scala-lang"  % "scala-reflect" % scalaVersion.value
-libraryDependencies += "org.scalatest"  %% "scalatest"     % "3.0.1"             % Test
+  publishMavenStyle := true,
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value)
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+  },
 
-unmanagedBase := baseDirectory.value / "lib"
-
-publishMavenStyle := true
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
-publishArtifact in Test := false
-pomExtra :=
+  publishArtifact in Test := false,
+  pomExtra :=
   <url>http://github.com/ctongfei/kingscross</url>
     <licenses>
       <license>
@@ -42,3 +38,23 @@ pomExtra :=
         <url>http://tongfei.me/</url>
       </developer>
     </developers>
+)
+
+lazy val common = (project in file("common"))
+    .settings(commonSettings: _*)
+    .settings(
+      name := "kingscross-common",
+      version := "0.1.0",
+      isSnapshot := false
+    )
+
+lazy val python = (project in file("python"))
+    .dependsOn(common)
+    .settings(commonSettings: _*)
+    .settings(
+      name := "kingscross-python",
+      version := "0.1.0-SNAPSHOT",
+      isSnapshot := true
+    )
+
+

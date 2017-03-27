@@ -1,7 +1,6 @@
 package kingscross
 
 import jep._
-import kingscross.py.syntax._
 import org.scalatest._
 
 /**
@@ -9,7 +8,9 @@ import org.scalatest._
  */
 class FunctionMarshallingTest extends FunSuite {
 
-  implicit val jep = new Jep(false)
+  val py = Python()
+  import py._
+
 
   test("Marshalling a Python function to Scala") {
 

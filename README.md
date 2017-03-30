@@ -1,4 +1,4 @@
-<img align="right" src="https://img0.etsystatic.com/151/0/9612812/il_570xN.1146611060_c3p5.jpg" height="100px" style="padding-left: 20px"/>
+<img align="right" src="https://raw.githubusercontent.com/ctongfei/kingscross/master/img/scala-py.png" height="150px" style="padding-left: 20px"/>
 
 # kingscross
 Calling external interpreters (Python etc.) from Scala

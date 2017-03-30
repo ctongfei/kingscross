@@ -13,7 +13,6 @@ class FunctionMarshallingTest extends FunSuite {
   implicit val py = Python()
   import py._
 
-
   test("Marshalling a Python function to Scala") {
 
     val f0 = py"lambda: 2".toScala[() => Int]

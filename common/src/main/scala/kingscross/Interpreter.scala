@@ -1,5 +1,6 @@
 package kingscross
 
+import scala.concurrent._
 import scala.language.higherKinds
 
 /**
@@ -25,6 +26,8 @@ trait Interpreter {
 
   /** Runs the given statement in this interpreter. */
   def exec(s: String): Any
+
+  def execAsync(s: String): Future[Any]
 
   /** Builds an expression object using the given expression. */
   def newExpr(s: String): Expr

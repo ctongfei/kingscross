@@ -2,8 +2,8 @@ import sbt.Keys._
 
 lazy val commonSettings = Seq(
   organization := "me.tongfei",
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.11.8", "2.12.1"),
+  scalaVersion := "2.11.11",
+  crossScalaVersions := Seq("2.11.11", "2.12.2"),
 
   libraryDependencies += "org.scala-lang"  % "scala-reflect" % scalaVersion.value,
   libraryDependencies += "org.scalatest"  %% "scalatest"     % "3.0.1"             % Test,
@@ -57,4 +57,11 @@ lazy val python = (project in file("python"))
       isSnapshot := true
     )
 
-
+lazy val bash = (project in file("bash"))
+    .dependsOn(common)
+    .settings(commonSettings: _*)
+    .settings(
+      name := "kingscross-bash",
+      version := "0.1.0-SNAPSHOT",
+      isSnapshot := true
+    )
